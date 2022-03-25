@@ -1,0 +1,57 @@
+pipeline {
+ agent any
+
+
+    environment {
+        wordpress_site = "wordpress_wordpress_1"
+		wordpress_db = "wordpress_db_1" 
+		
+    }
+    stages {
+          stage('stop/rm') {
+
+            when {
+                expression { 
+                    DOCKER_EXIST = sh(returnStdout: true, script: 'echo "$(docker ps -q --filter name=${wordpress_site})"').trim()
+                    return  DOCKER_EXIST != '' 
+                }
+            }
+            steps {
+                script{
+                    sh ''' 
+                         docker stop ${wordpress_site}
+						 docker rm ${wordpress_site}
+						 docker stop ${wordpress_db}
+						 docker rm ${wordpress_db}
+                    '''
+                    }
+                }                    
+                                  
+            }
+           
+            stage('run') {
+            steps {
+                script{
+                    sh ''' 
+                        docker docker-compose up -d
+                    '''
+                    }
+                    
+                }                    
+                                  
+            }
+            
+          
+        }
+	post {
+      success {
+            sh "echo 'Wordpress corriendo'"
+        }
+
+      failure {
+            sh "echo 'Algo salió mal'"
+      }
+      
+	}
+		
+ }
