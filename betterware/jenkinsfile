@@ -32,6 +32,7 @@ pipeline {
             steps {
                 script{
                     sh ''' 
+		        cd betterware/
                         docker-compose up -d
                     '''
                     }
