@@ -32,7 +32,7 @@ pipeline {
             steps {
                 script{
                     sh ''' 
-		        echo pwd
+		        pwd
 			cd betterware/
                         docker-compose up -d
                     '''
